@@ -63,7 +63,7 @@ runTest({
 });
 
 runTest({
-  name: 'Change value based on parent',
+  name: 'Change values based on parent',
   input: {
     name: 'Ignacio',
     surname: 'Valencia',
@@ -100,32 +100,6 @@ runTest({
         username: 'mawrkus',
         password: 'zzz',
       },
-    },
-  },
-});
-
-runTest({
-  name: 'Rename',
-  input: {
-    name: 'Ignacio',
-    surname: 'Valencia',
-    friend: {
-      name: 'Marc',
-      surname: 'Mignonsin',
-    },
-  },
-  visitors: {
-    surname(node) {
-      node.name = 'familyName';
-      return node;
-    },
-  },
-  expected: {
-    name: 'Ignacio',
-    familyName: 'Valencia',
-    friend: {
-      name: 'Marc',
-      familyName: 'Mignonsin',
     },
   },
 });
@@ -176,6 +150,35 @@ runTest({
     friend: {
       name: 'Marc',
       surname: '[redacted]',
+    },
+  },
+});
+
+runTest({
+  name: 'Change name based on direct children',
+  input: {
+    name: 'Ignacio',
+    surname: 'Valencia',
+    friend: {
+      surname: 'Mignonsin',
+      name: 'Marc',
+    },
+  },
+  visitors: {
+    friend(node) {
+      const { children } = node;
+      if (children.find(({ name, value }) => name === 'name' && value === 'Marc')) {
+        node.name = 'colleague';
+      }
+      return node;
+    },
+  },
+  expected: {
+    name: 'Ignacio',
+    surname: 'Valencia',
+    colleague: {
+      surname: 'Mignonsin',
+      name: 'Marc',
     },
   },
 });
