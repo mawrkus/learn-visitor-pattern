@@ -1,11 +1,11 @@
 const assert = require('assert');
-const transpile = require('./transpile');
+const traverse = require('./traverse');
 
 module.exports = {
-  runTest({ name, input, visitors, expected }) {
+  runTest({ name, input, visitor, expected }) {
     console.log('\nRunning test "%s"...', name);
 
-    const output = transpile(input, visitors);
+    const output = traverse(input, visitor);
 
     try {
       assert.deepEqual(output, expected);

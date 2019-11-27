@@ -10,7 +10,7 @@ runTest({
       password: 'xxx',
     },
   },
-  visitors: {
+  visitor: {
     surname(node) {
       node.value = 'V.';
       return node;
@@ -41,7 +41,7 @@ runTest({
       },
     },
   },
-  visitors: {
+  visitor: {
     surname(node) {
       node.value = 'V.';
       return node;
@@ -80,7 +80,7 @@ runTest({
       },
     },
   },
-  visitors: {
+  visitor: {
     credentials(node) {
       if (!node.parent) {
         const { username, password } = node.value;
@@ -114,7 +114,7 @@ runTest({
       surname: 'Mignonsin',
     },
   },
-  visitors: {
+  visitor: {
     surname(node) {
       node.name = 'familyName';
       node.value = `${node.value[0]}.`;
@@ -141,7 +141,7 @@ runTest({
       surname: 'Mignonsin',
     },
   },
-  visitors: {
+  visitor: {
     surname: '[redacted]',
   },
   expected: {
@@ -164,7 +164,7 @@ runTest({
       name: 'Marc',
     },
   },
-  visitors: {
+  visitor: {
     friend(node) {
       const { children } = node;
       if (children.find(({ name, value }) => name === 'name' && value === 'Marc')) {
