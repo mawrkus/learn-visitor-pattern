@@ -2,10 +2,10 @@ const assert = require('assert');
 const transpile = require('./transpile');
 
 module.exports = {
-  runTest({ name, input, options, expected }) {
+  runTest({ name, input, visitors, expected }) {
     console.log('\nRunning test "%s"...', name);
 
-    const output = transpile(input, options);
+    const output = transpile(input, visitors);
 
     try {
       assert.deepEqual(output, expected);

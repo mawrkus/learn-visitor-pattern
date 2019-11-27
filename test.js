@@ -10,7 +10,7 @@ runTest({
       password: 'xxx',
     },
   },
-  options: {
+  visitors: {
     surname(node) {
       node.value = 'V.';
       return node;
@@ -41,7 +41,7 @@ runTest({
       },
     },
   },
-  options: {
+  visitors: {
     surname(node) {
       node.value = 'V.';
       return node;
@@ -80,7 +80,7 @@ runTest({
       },
     },
   },
-  options: {
+  visitors: {
     credentials(node) {
       if (!node.parent) {
         const { username, password } = node.value;
@@ -114,7 +114,7 @@ runTest({
       surname: 'Mignonsin',
     },
   },
-  options: {
+  visitors: {
     surname(node) {
       node.name = 'familyName';
       return node;
@@ -140,7 +140,7 @@ runTest({
       surname: 'Mignonsin',
     },
   },
-  options: {
+  visitors: {
     surname(node) {
       node.name = 'familyName';
       node.value = `${node.value[0]}.`;
@@ -153,6 +153,29 @@ runTest({
     friend: {
       name: 'Marc',
       familyName: 'M.',
+    },
+  },
+});
+
+runTest({
+  name: 'Set constant values',
+  input: {
+    name: 'Ignacio',
+    surname: 'Valencia',
+    friend: {
+      name: 'Marc',
+      surname: 'Mignonsin',
+    },
+  },
+  visitors: {
+    surname: '[redacted]',
+  },
+  expected: {
+    name: 'Ignacio',
+    surname: '[redacted]',
+    friend: {
+      name: 'Marc',
+      surname: '[redacted]',
     },
   },
 });
