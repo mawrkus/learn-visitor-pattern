@@ -1,0 +1,12 @@
+{
+  "name": "visitor-pattern",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "dev": "nodemon test.js"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.1"
+  }
+}
