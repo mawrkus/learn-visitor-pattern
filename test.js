@@ -1,7 +1,7 @@
 const { runTest, xrunTest } = require('./runTest');
 
 runTest({
-  name: '#1',
+  name: 'Change values at depth=1',
   input: {
     name: 'Ignacio',
     surname: 'Valencia',
@@ -11,20 +11,25 @@ runTest({
     },
   },
   options: {
+    surname(node) {
+      node.value = 'V.';
+      return node;
+    },
     credentials(node) {
-      const { username, password } = node;
-      return `${username}:${password}`;
+      const { username, password } = node.value;
+      node.value = `${username}:${password}`;
+      return node;
     },
   },
   expected: {
     name: 'Ignacio',
-    surname: 'Valencia',
+    surname: 'V.',
     credentials: 'nacho:xxx',
   },
 });
 
-xrunTest({
-  name: '#2',
+runTest({
+  name: 'Change values at depth=2',
   input: {
     createdOn: 'today',
     identity: {
@@ -37,23 +42,28 @@ xrunTest({
     },
   },
   options: {
+    surname(node) {
+      node.value = 'V.';
+      return node;
+    },
     credentials(node) {
-      const { username, password } = node;
-      return `${username}:${password}`;
+      const { username, password } = node.value;
+      node.value = `${username}:${password}`;
+      return node;
     },
   },
   expected: {
     createdOn: 'today',
     identity: {
       name: 'Ignacio',
-      surname: 'Valencia',
+      surname: 'V.',
       credentials: 'nacho:xxx',
     },
   },
 });
 
-xrunTest({
-  name: '#3',
+runTest({
+  name: 'Change value based on parent',
   input: {
     name: 'Ignacio',
     surname: 'Valencia',
@@ -63,7 +73,7 @@ xrunTest({
     },
     friend: {
       name: 'Marc',
-      surname: 'M.',
+      surname: 'Mignonsin',
       credentials: {
         username: 'mawrkus',
         password: 'zzz',
@@ -72,8 +82,11 @@ xrunTest({
   },
   options: {
     credentials(node) {
-      const { username, password } = node;
-      return `${username}:${password}`;
+      if (!node.parent) {
+        const { username, password } = node.value;
+        node.value = `${username}:${password}`;
+      }
+      return node;
     },
   },
   expected: {
@@ -82,7 +95,7 @@ xrunTest({
     credentials: 'nacho:xxx',
     friend: {
       name: 'Marc',
-      surname: 'M.',
+      surname: 'Mignonsin',
       credentials: {
         username: 'mawrkus',
         password: 'zzz',
@@ -90,3 +103,58 @@ xrunTest({
     },
   },
 });
+
+runTest({
+  name: 'Rename',
+  input: {
+    name: 'Ignacio',
+    surname: 'Valencia',
+    friend: {
+      name: 'Marc',
+      surname: 'Mignonsin',
+    },
+  },
+  options: {
+    surname(node) {
+      node.name = 'familyName';
+      return node;
+    },
+  },
+  expected: {
+    name: 'Ignacio',
+    familyName: 'Valencia',
+    friend: {
+      name: 'Marc',
+      familyName: 'Mignonsin',
+    },
+  },
+});
+
+runTest({
+  name: 'Rename and change values',
+  input: {
+    name: 'Ignacio',
+    surname: 'Valencia',
+    friend: {
+      name: 'Marc',
+      surname: 'Mignonsin',
+    },
+  },
+  options: {
+    surname(node) {
+      node.name = 'familyName';
+      node.value = `${node.value[0]}.`;
+      return node;
+    },
+  },
+  expected: {
+    name: 'Ignacio',
+    familyName: 'V.',
+    friend: {
+      name: 'Marc',
+      familyName: 'M.',
+    },
+  },
+});
+
+console.log('\n:All tests finished.\n');

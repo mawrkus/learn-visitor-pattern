@@ -3,12 +3,21 @@ const transpile = require('./transpile');
 
 module.exports = {
   runTest({ name, input, options, expected }) {
-    console.log('Running test "%s"...', name);
+    console.log('\nRunning test "%s"...', name);
+
     const output = transpile(input, options);
-    assert.deepEqual(output, expected);
-    console.log(':D All good!');
+
+    try {
+      assert.deepEqual(output, expected);
+      console.log('-> ok!');
+    } catch (error) {
+      console.error('-> fail!');
+      console.error('\nExpected: %o', expected);
+      console.error('\nReceived: %o\n', output);
+      console.log(error);
+    }
   },
   xrunTest({ name }) {
-    console.log('Skipping test "%s".', name);
+    console.log('\nSkipping test "%s".', name);
   },
 };
