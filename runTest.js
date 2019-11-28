@@ -1,5 +1,5 @@
 const assert = require('assert');
-const traverse = require('./traverse');
+const { traverse } = require('./traverse');
 
 module.exports = {
   runTest({ name, input, visitor, expected }) {

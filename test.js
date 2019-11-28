@@ -1,4 +1,5 @@
 const { runTest, xrunTest } = require('./runTest');
+const { rootSymbol } = require('./traverse');
 
 runTest({
   name: 'Change values at depth=1',
@@ -180,6 +181,31 @@ runTest({
       surname: 'Mignonsin',
       name: 'Marc',
     },
+  },
+});
+
+runTest({
+  name: 'Add root level values',
+  input: {
+    name: 'Ignacio',
+    surname: 'Valencia',
+  },
+  visitor: {
+    [rootSymbol](node) {
+      node.value = {
+        ...node.value,
+        // add only, for instance setting
+        // name: 'I.' will not work as only the original input is traversed
+        status: 'In a relationship',
+      };
+      return node;
+    },
+    surname: 'V.'
+  },
+  expected: {
+    name: 'Ignacio',
+    surname: 'V.',
+    status: 'In a relationship'
   },
 });
 

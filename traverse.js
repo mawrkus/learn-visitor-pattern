@@ -1,26 +1,32 @@
 const isObject =  (thing) => Object.prototype.toString.call(thing) === '[object Object]';
 
-const createNode = (parent) => ([name, value]) => ({
-  name,
-  value,
-  parent,
-  children: [],
-});
+const createNode = (parent) => ([name, value]) => {
+  const node = {
+    name,
+    value,
+    parent,
+    children: [],
+  };
 
-module.exports = function traverse(sourceObject, visitor, currentParentNode = null) {
-  const result = {};
-  const sourceObjectEntries = Object.entries(sourceObject);
+  node.children = isObject(value)
+    ? Object.entries(value).map(createNode(node))
+    : [];
+
+  return node;
+};
+
+const rootSymbol = Symbol('root');
+
+function traverse(sourceObject, visitor, currentParentNode = null) {
+  let result = {};
+
+  const sourceObjectEntries = [
+    [rootSymbol, sourceObject],
+    ...Object.entries(sourceObject),
+  ];
 
   sourceObjectEntries.forEach(([sourceKey, sourceValue]) => {
     let node = createNode(currentParentNode)([sourceKey, sourceValue]);
-
-    const isSourceValueObject = isObject(sourceValue);
-
-    // direct children only ;)
-    // the proper approach would be to parse the source object to generate an AST, then to visit
-    node.children = isSourceValueObject
-      ? Object.entries(sourceValue).map(createNode(node))
-      : [];
 
     const visitorMethodOrValue = visitor[sourceKey];
 
@@ -30,7 +36,12 @@ module.exports = function traverse(sourceObject, visitor, currentParentNode = nu
       } else {
         node.value = visitorMethodOrValue;
       }
-    } else if (isSourceValueObject) {
+
+      if (sourceKey === rootSymbol) {
+        result = node.value;
+        return;
+      }
+    } else if ((sourceValue !== sourceObject) && isObject(sourceValue)) {
       node.value = traverse(sourceValue, visitor, node);
     }
 
@@ -39,3 +50,8 @@ module.exports = function traverse(sourceObject, visitor, currentParentNode = nu
 
   return result;
 }
+
+module.exports = {
+  traverse,
+  rootSymbol,
+};
