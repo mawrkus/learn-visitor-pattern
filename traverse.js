@@ -1,6 +1,6 @@
-const isObject =  (thing) => Object.prototype.toString.call(thing) === '[object Object]';
+const isObject = thing => Object.prototype.toString.call(thing) === '[object Object]';
 
-const createNode = (parent) => ([name, value]) => {
+const createNode = parent => ([name, value]) => {
   const node = {
     name,
     value,
@@ -32,7 +32,7 @@ function traverse(sourceObject, visitor, currentParentNode = null) {
 
     if (typeof visitorMethodOrValue !== 'undefined') {
       if (typeof visitorMethodOrValue === 'function') {
-        node = visitorMethodOrValue(node)
+        node = visitorMethodOrValue(node);
       } else {
         node.value = visitorMethodOrValue;
       }
