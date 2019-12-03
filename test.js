@@ -204,7 +204,7 @@ runTest({
       };
       return node;
     },
-    surname: 'V.'
+    surname: 'V.',
   },
   expected: {
     name: 'Ignacio',
@@ -214,6 +214,26 @@ runTest({
       password: 'toomanysecrets',
     },
     status: 'In a relationship',
+  },
+});
+
+runTest({
+  name: 'Setting values to "undefined"',
+  input: {
+    name: 'Ignacio',
+    surname: 'Valencia',
+    credentials: {
+      username: 'nacho',
+      password: 'toomanysecrets',
+    }
+  },
+  visitor: {
+    credentials: undefined,
+  },
+  expected: {
+    name: 'Ignacio',
+    surname: 'Valencia',
+    credentials: undefined,
   },
 });
 

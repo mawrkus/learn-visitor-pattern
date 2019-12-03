@@ -19,11 +19,11 @@ const rootSymbol = Symbol('root');
 
 function traverse(sourceObject, visitor) {
   let result = {};
-
-  const visitorMethodOrValue = visitor[rootSymbol];
   let node = createNode(null)([rootSymbol, sourceObject]);
 
-  if (typeof visitorMethodOrValue !== 'undefined') {
+  if (rootSymbol in visitor) {
+    const visitorMethodOrValue = visitor[rootSymbol];
+
     if (typeof visitorMethodOrValue === 'function') {
       node = visitorMethodOrValue(node);
     } else {
@@ -41,14 +41,14 @@ function traverse(sourceObject, visitor) {
 
 function _traverse(sourceObject, visitor, parentNode) {
   const result = {};
-
   const sourceObjectEntries = Object.entries(sourceObject);
 
   sourceObjectEntries.forEach(([sourceKey, sourceValue]) => {
-    const visitorMethodOrValue = visitor[sourceKey];
     let node = createNode(parentNode)([sourceKey, sourceValue]);
 
-    if (typeof visitorMethodOrValue !== 'undefined') {
+    if (sourceKey in visitor) {
+      const visitorMethodOrValue = visitor[sourceKey];
+
       if (typeof visitorMethodOrValue === 'function') {
         node = visitorMethodOrValue(node);
       } else {
