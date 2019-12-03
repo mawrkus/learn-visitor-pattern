@@ -40,7 +40,7 @@ function traverse(sourceObject, visitor) {
 }
 
 function _traverse(sourceObject, visitor, parentNode) {
-  let result = {};
+  const result = {};
 
   const sourceObjectEntries = Object.entries(sourceObject);
 
