@@ -83,7 +83,7 @@ runTest({
   },
   visitor: {
     credentials(node) {
-      if (!node.parent) {
+      if (node.parent.name === rootSymbol) {
         const { username, password } = node.value;
         node.value = `${username}:${password}`;
       }
@@ -189,6 +189,10 @@ runTest({
   input: {
     name: 'Ignacio',
     surname: 'Valencia',
+    credentials: {
+      username: 'nacho',
+      password: 'toomanysecrets',
+    }
   },
   visitor: {
     [rootSymbol](node) {
@@ -205,7 +209,11 @@ runTest({
   expected: {
     name: 'Ignacio',
     surname: 'V.',
-    status: 'In a relationship'
+    credentials: {
+      username: 'nacho',
+      password: 'toomanysecrets',
+    },
+    status: 'In a relationship',
   },
 });
 

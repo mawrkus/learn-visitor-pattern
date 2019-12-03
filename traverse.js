@@ -17,18 +17,36 @@ const createNode = parent => ([name, value]) => {
 
 const rootSymbol = Symbol('root');
 
-function traverse(sourceObject, visitor, currentParentNode = null) {
+function traverse(sourceObject, visitor) {
   let result = {};
 
-  const sourceObjectEntries = [
-    [rootSymbol, sourceObject],
-    ...Object.entries(sourceObject),
-  ];
+  const visitorMethodOrValue = visitor[rootSymbol];
+  let node = createNode(null)([rootSymbol, sourceObject]);
+
+  if (typeof visitorMethodOrValue !== 'undefined') {
+    if (typeof visitorMethodOrValue === 'function') {
+      node = visitorMethodOrValue(node);
+    } else {
+      node.value = visitorMethodOrValue;
+    }
+
+    result = node.value;
+  }
+
+  return {
+    ...result,
+    ..._traverse(sourceObject, visitor, node),
+  };
+}
+
+function _traverse(sourceObject, visitor, parentNode) {
+  let result = {};
+
+  const sourceObjectEntries = Object.entries(sourceObject);
 
   sourceObjectEntries.forEach(([sourceKey, sourceValue]) => {
-    let node = createNode(currentParentNode)([sourceKey, sourceValue]);
-
     const visitorMethodOrValue = visitor[sourceKey];
+    let node = createNode(parentNode)([sourceKey, sourceValue]);
 
     if (typeof visitorMethodOrValue !== 'undefined') {
       if (typeof visitorMethodOrValue === 'function') {
@@ -36,13 +54,8 @@ function traverse(sourceObject, visitor, currentParentNode = null) {
       } else {
         node.value = visitorMethodOrValue;
       }
-
-      if (sourceKey === rootSymbol) {
-        result = node.value;
-        return;
-      }
-    } else if ((sourceValue !== sourceObject) && isObject(sourceValue)) {
-      node.value = traverse(sourceValue, visitor, node);
+    } else if (isObject(sourceValue)) {
+      node.value = _traverse(sourceValue, visitor, node);
     }
 
     result[node.name] = node.value;
