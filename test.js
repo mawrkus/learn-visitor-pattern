@@ -64,6 +64,126 @@ runTest({
 });
 
 runTest({
+  name: 'Change values at depth=1 & depth=2',
+  input: {
+    createdOn: 'today',
+    identity: {
+      name: 'Ignacio',
+      surname: 'Valencia',
+      credentials: {
+        username: 'nacho',
+        password: 'xxx',
+      },
+    },
+  },
+  visitor: {
+    identity(node) {
+      node.name = 'user';
+      return node;
+    },
+    credentials(node) {
+      node.name = 'secrets';
+      node.value = {
+        username: '*',
+        password: '*',
+      };
+      return node;
+    },
+  },
+  expected: {
+    createdOn: 'today',
+    user: {
+      name: 'Ignacio',
+      surname: 'Valencia',
+      secrets: {
+        username: '*',
+        password: '*',
+      },
+    },
+  },
+});
+
+runTest({
+  name: 'Recursive changes of a primitive value',
+  input: {
+    network: {
+      name: 'Nacho',
+      username: 'NACHOVALEN',
+      friend: {
+        name: 'Marc',
+        username: 'MAWRKUS',
+        friend: {
+          name: 'Alex',
+          username: 'SVIRI',
+        },
+      },
+    },
+  },
+  visitor: {
+    username(node) {
+      node.value = node.value.toLowerCase();
+      return node;
+    },
+  },
+  expected: {
+    network: {
+      name: 'Nacho',
+      username: 'nachovalen',
+      friend: {
+        name: 'Marc',
+        username: 'mawrkus',
+        friend: {
+          name: 'Alex',
+          username: 'sviri',
+        },
+      },
+    },
+  },
+});
+
+runTest({
+  name: 'Recursive changes of an object',
+  input: {
+    network: {
+      name: 'Nacho',
+      username: 'nachovalen',
+      friend: {
+        name: 'Marc',
+        username: 'mawrkus',
+        friend: {
+          name: 'Alex',
+          username: 'sviri',
+        },
+      },
+    },
+  },
+  visitor: {
+    friend(node) {
+      node.value = {
+        ...node.value,
+        name: '?',
+        username: '*',
+      };
+      return node;
+    },
+  },
+  expected: {
+    network: {
+      name: 'Nacho',
+      username: 'nachovalen',
+      friend: {
+        name: '?',
+        username: '*',
+        friend: {
+          name: '?',
+          username: '*',
+        },
+      },
+    },
+  },
+});
+
+runTest({
   name: 'Change values based on parent',
   input: {
     name: 'Ignacio',
@@ -237,4 +357,4 @@ runTest({
   },
 });
 
-console.log('\n:All tests finished.\n');
+console.log('\nAll tests finished.\n');

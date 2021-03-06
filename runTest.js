@@ -9,12 +9,10 @@ module.exports = {
 
     try {
       assert.deepEqual(output, expected);
-      console.log('-> ok!');
+      console.log('\033[1;32mok!\033[0m');
     } catch (error) {
-      console.error('-> fail!');
-      console.error('\nExpected: %o', expected);
-      console.error('\nReceived: %o\n', output);
-      console.log(error);
+      console.error('\033[1;31mfail!\033[0m\n');
+      throw error;
     }
   },
   xrunTest({ name }) {

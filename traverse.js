@@ -54,8 +54,10 @@ function _traverse(sourceObject, visitor, parentNode) {
       } else {
         node.value = visitorMethodOrValue;
       }
-    } else if (isObject(sourceValue)) {
-      node.value = _traverse(sourceValue, visitor, node);
+    }
+
+    if (isObject(node.value)) {
+      node.value = _traverse(node.value, visitor, node);
     }
 
     result[node.name] = node.value;
